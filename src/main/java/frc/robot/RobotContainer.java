@@ -7,12 +7,19 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 import frc.robot.commands.AutoCommand;
+import frc.robot.commands.EjectCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.Shooter;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import static frc.robot.Constants.Controls.*;
 
@@ -28,11 +35,12 @@ public class RobotContainer {
   private final Lifter m_lifter = new Lifter();
   private final Shooter m_shooter = new Shooter();
 
+  private final Joystick m_leftDriveJoystick = new Joystick(k_leftDriveJoystickChannel);
+  private final Joystick m_rightDriveJoystick = new Joystick(k_rightDriveJoystickChannel);
+  private final Joystick m_operatorJoystick = new Joystick(k_operatorJoystickChannel);
+  
   private final AutoCommand m_autoCommand = new AutoCommand(m_drivetrain, m_shooter);
-
-  private final Joystick m_leftDriveStick = new Joystick(k_leftDriveJoystickChannel);
-  private final Joystick m_rightDriveStick = new Joystick(k_rightDriveJoystickChannel);
-
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -43,8 +51,11 @@ public class RobotContainer {
       new RunCommand(
         () ->
           m_drivetrain.tankDrive(
-            m_leftDriveStick.getY(), m_rightDriveStick.getY()),
-      m_drivetrain));
+            m_leftDriveJoystick.getRawAxis(k_leftDriveAxisChannel),
+            m_rightDriveJoystick.getRawAxis(k_rightDriveAxisChannel)
+          ),
+        m_drivetrain
+    ));
   }
 
   /**
@@ -54,7 +65,20 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // Raise the lifter while the lift button is held and lower it when released.
+    new ConditionalCommand(
+      new InstantCommand(m_lifter::raise, m_lifter),
+      new InstantCommand(m_lifter::lower, m_lifter),
+      new JoystickButton(m_operatorJoystick, k_liftButton));
 
+    new JoystickButton(m_operatorJoystick, k_intakeButton)
+      .whenPressed(new IntakeCommand(m_shooter));
+
+    new JoystickButton(m_operatorJoystick, k_ejectButton)
+      .whenPressed(new EjectCommand(m_shooter));
+    
+    new JoystickButton(m_operatorJoystick, k_shootButton)
+      .whenPressed(new ShootCommand(m_shooter));
   }
 
   /**

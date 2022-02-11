@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.LifterConstants.*;
 
 public class Lifter extends SubsystemBase {
-  private final Solenoid m_lifterSolenoid;
+  private final Solenoid m_lifterSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_lifterSolenoidID);
 
   /** Creates a new Lifter. */
   public Lifter() {
-    m_lifterSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_lifterSolenoidID);
   }
 
   @Override

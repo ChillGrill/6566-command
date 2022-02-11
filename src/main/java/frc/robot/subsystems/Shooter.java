@@ -15,27 +15,18 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-  private final VictorSPX m_intakeWheels;
-  private final VictorSPX m_lowerConveyor;
-  private final VictorSPX m_upperConveyor;
-  private final VictorSPX m_shooterWheels;
+  private final VictorSPX m_intakeWheels = new VictorSPX(k_intakeWheelsID);
+  private final VictorSPX m_lowerFeeder = new VictorSPX(k_lowerFeederID);
+  private final VictorSPX m_upperFeeder = new VictorSPX(k_upperFeederID);
+  private final VictorSPX m_shooterWheels = new VictorSPX(k_shooterWheelsID);
 
-  private final Solenoid m_intakeSolenoid;
+  private final Solenoid m_intakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_intakeSolenoidID);
 
-  private final DigitalInput m_index1LimitSwitch;
-  private final DigitalInput m_index2LimitSwitch;
+  private final DigitalInput m_index1LimitSwitch = new DigitalInput(k_index1LimitSwitchID);
+  private final DigitalInput m_index2LimitSwitch = new DigitalInput(k_index2LimitSwitchID);
 
   /** Creates a new Intake. */
   public Shooter() {
-    m_intakeWheels = new VictorSPX(k_intakeWheelsID);
-    m_lowerConveyor = new VictorSPX(k_lowerConveyorID);
-    m_upperConveyor = new VictorSPX(k_upperConveyorID);
-    m_shooterWheels = new VictorSPX(k_shooterWheelsID);
-    
-    m_intakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_intakeSolenoidID);
-
-    m_index1LimitSwitch = new DigitalInput(k_index1LimitSwitchID);
-    m_index2LimitSwitch = new DigitalInput(k_index2LimitSwitchID);
   }
 
   @Override

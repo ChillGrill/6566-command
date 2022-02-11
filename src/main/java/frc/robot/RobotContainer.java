@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.AutoCommand;
@@ -27,13 +25,8 @@ import frc.robot.subsystems.Shooter;
 
 import java.util.function.DoubleSupplier;
 
-import static edu.wpi.first.wpilibj2.command.CommandGroupBase.sequence;
-import static edu.wpi.first.wpilibj2.command.CommandGroupBase.parallel;
-
 import static frc.robot.Constants.Controls.*;
 import static frc.robot.Constants.k_pigeonID;
-import static frc.robot.Constants.ShooterConstants.k_shooterWindupTime;
-import static frc.robot.Constants.ShooterConstants.k_shootingTime;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

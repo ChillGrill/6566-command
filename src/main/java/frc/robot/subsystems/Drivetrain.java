@@ -8,7 +8,6 @@ import static frc.robot.Constants.DrivetrainConstants.*;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -28,8 +27,6 @@ public class Drivetrain extends SubsystemBase {
   private final CANCoder m_leftDriveEncoder;
   private final CANCoder m_rightDriveEncoder;
 
-  private final Pigeon2 m_pigeonIMU;
-
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // TODO: configure encoders to drive motors.
@@ -45,14 +42,11 @@ public class Drivetrain extends SubsystemBase {
     m_rightDriveMotors = new MotorControllerGroup(m_frontRightDriveMotor, m_backRightDriveMotor);
 
     m_drive = new DifferentialDrive(m_leftDriveMotors, m_rightDriveMotors);
-
-    m_pigeonIMU = new Pigeon2(k_pigeonID);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    angle = m_pigeonIMU.getYaw();
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {

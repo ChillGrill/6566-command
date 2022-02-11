@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.sensors.Pigeon2;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,7 +23,11 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.Shooter;
 
+import java.util.function.DoubleSupplier;
+
 import static frc.robot.Constants.Controls.*;
+import static frc.robot.Constants.k_pigeonID;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,6 +40,8 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Lifter m_lifter = new Lifter();
   private final Shooter m_shooter = new Shooter();
+  private final Pigeon2 m_pigeon = new Pigeon2(k_pigeonID);
+  private final DoubleSupplier m_heading = m_pigeon::getYaw;
 
   private final Joystick m_leftDriveJoystick = new Joystick(k_leftDriveJoystickChannel);
   private final Joystick m_rightDriveJoystick = new Joystick(k_rightDriveJoystickChannel);

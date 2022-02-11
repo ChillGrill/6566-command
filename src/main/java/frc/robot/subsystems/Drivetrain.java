@@ -32,7 +32,7 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    // TODO: configure encoders to drive motors
+    // TODO: configure encoders to drive motors.
     m_leftDriveEncoder = new CANCoder(k_leftDriveEncoderID);
     m_rightDriveEncoder = new CANCoder(k_rightDriveEncoderID);
     

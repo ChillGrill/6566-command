@@ -28,7 +28,7 @@ public class RobotContainer {
   private final Lifter m_lifter = new Lifter();
   private final Shooter m_shooter = new Shooter();
 
-  private final AutoCommand m_autoCommand = new AutoCommand();
+  private final AutoCommand m_autoCommand = new AutoCommand(m_drivetrain, m_shooter);
 
   private final Joystick m_leftDriveStick = new Joystick(k_leftDriveJoystickChannel);
   private final Joystick m_rightDriveStick = new Joystick(k_rightDriveJoystickChannel);

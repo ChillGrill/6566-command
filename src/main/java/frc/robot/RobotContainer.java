@@ -10,29 +10,38 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.AutoCommand;
-import frc.robot.commands.EjectCommand;
+import frc.robot.commands.EjectFeederCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.StopFeederCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.Shooter;
 
 import java.util.function.DoubleSupplier;
 
+import static edu.wpi.first.wpilibj2.command.CommandGroupBase.sequence;
+import static edu.wpi.first.wpilibj2.command.CommandGroupBase.parallel;
+
 import static frc.robot.Constants.Controls.*;
 import static frc.robot.Constants.k_pigeonID;
-
+import static frc.robot.Constants.ShooterConstants.k_shooterWindupTime;
+import static frc.robot.Constants.ShooterConstants.k_shootingTime;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -46,24 +55,27 @@ public class RobotContainer {
   private final Joystick m_leftDriveJoystick = new Joystick(k_leftDriveJoystickChannel);
   private final Joystick m_rightDriveJoystick = new Joystick(k_rightDriveJoystickChannel);
   private final Joystick m_operatorJoystick = new Joystick(k_operatorJoystickChannel);
-  
+
   private final AutoCommand m_autoCommand = new AutoCommand(m_drivetrain, m_shooter);
-  
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final IntakeCommand m_intakeCommand = new IntakeCommand(m_shooter);
+  private final StopFeederCommand m_stopFeederCommand = new StopFeederCommand(m_shooter);
+  private final EjectFeederCommand m_ejectFeederCommand = new EjectFeederCommand(m_shooter);
+  private final ShootCommand m_ShootCommand = new ShootCommand(m_shooter);
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
 
     // Set the drivetrain's default drive command
     m_drivetrain.setDefaultCommand(
-      new RunCommand(
-        () ->
-          m_drivetrain.tankDrive(
-            m_leftDriveJoystick.getRawAxis(k_leftDriveAxisChannel),
-            m_rightDriveJoystick.getRawAxis(k_rightDriveAxisChannel)
-          ),
-        m_drivetrain
-    ));
+        new RunCommand(
+            () -> m_drivetrain.tankDrive(
+                m_leftDriveJoystick.getRawAxis(k_leftDriveAxisChannel),
+                m_rightDriveJoystick.getRawAxis(k_rightDriveAxisChannel)),
+            m_drivetrain));
   }
 
   /**
@@ -74,19 +86,23 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Raise the lifter while the lift button is held and lower it when released.
-    new ConditionalCommand(
-      new InstantCommand(m_lifter::raise, m_lifter),
-      new InstantCommand(m_lifter::lower, m_lifter),
-      new JoystickButton(m_operatorJoystick, k_liftButton));
+    new JoystickButton(m_operatorJoystick, k_liftButton)
+      .whenPressed(new InstantCommand(m_lifter::raise, m_lifter))
+      .whenReleased(new InstantCommand(m_lifter::lower, m_lifter));
 
+    // Begin intake when pressed. Stop intake when released.
     new JoystickButton(m_operatorJoystick, k_intakeButton)
-      .whenPressed(new IntakeCommand(m_shooter));
+      .whenPressed(m_intakeCommand)
+      .whenReleased(m_stopFeederCommand);
 
-    new JoystickButton(m_operatorJoystick, k_ejectButton)
-      .whenPressed(new EjectCommand(m_shooter));
-    
+    // Begin the shooting process.
     new JoystickButton(m_operatorJoystick, k_shootButton)
-      .whenPressed(new ShootCommand(m_shooter));
+      .whenPressed(m_ShootCommand);
+
+    // Eject from the robot when pressed. Stop when released.
+    new JoystickButton(m_operatorJoystick, k_ejectButton)
+      .whenPressed(m_ejectFeederCommand)
+      .whenReleased(m_stopFeederCommand);
   }
 
   /**

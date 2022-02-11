@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.DrivetrainConstants.*;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -13,9 +11,13 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static frc.robot.Constants.DrivetrainConstants.*;
+
 public class Drivetrain extends SubsystemBase {
-  private final MotorControllerGroup m_leftDriveMotors = new MotorControllerGroup(new WPI_VictorSPX(k_frontLeftDriveID), new WPI_VictorSPX(k_backLeftDriveID));
-  private final MotorControllerGroup m_rightDriveMotors = new MotorControllerGroup(new WPI_VictorSPX(k_frontRightDriveID), new WPI_VictorSPX(k_backRightDriveID));
+  private final MotorControllerGroup m_leftDriveMotors = new MotorControllerGroup(
+    new WPI_VictorSPX(k_frontLeftDriveID), new WPI_VictorSPX(k_backLeftDriveID));
+  private final MotorControllerGroup m_rightDriveMotors = new MotorControllerGroup(
+    new WPI_VictorSPX(k_frontRightDriveID), new WPI_VictorSPX(k_backRightDriveID));
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftDriveMotors, m_rightDriveMotors);
 
   private final CANCoder m_leftDriveEncoder = new CANCoder(k_leftDriveEncoderID);

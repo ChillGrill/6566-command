@@ -4,21 +4,21 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ShooterConstants.*;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.components.TernaryMotorController;
+
+import static frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase {
-  private final VictorSPX m_intakeWheels = new VictorSPX(k_intakeWheelsID);
-  private final VictorSPX m_lowerFeeder = new VictorSPX(k_lowerFeederID);
-  private final VictorSPX m_upperFeeder = new VictorSPX(k_upperFeederID);
-  private final VictorSPX m_shooterWheels = new VictorSPX(k_shooterWheelsID);
+  private final TernaryMotorController m_intakeWheels = new TernaryMotorController(new WPI_VictorSPX(k_intakeWheelsID), k_intakeSpeed);
+  private final TernaryMotorController m_lowerFeeder = new TernaryMotorController(new WPI_VictorSPX(k_lowerFeederID), k_feederSpeed);
+  private final TernaryMotorController m_upperFeeder = new TernaryMotorController(new WPI_VictorSPX(k_upperFeederID), k_feederSpeed);
+  private final TernaryMotorController m_shooterWheels = new TernaryMotorController(new WPI_VictorSPX(k_shooterWheelsID), k_shooterWheelSpeed);
 
   private final Solenoid m_intakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_intakeSolenoidID);
 
@@ -43,47 +43,47 @@ public class Shooter extends SubsystemBase {
   }
 
   public void inputIntake() {
-    setIntakeWheels(k_intakeSpeed);
+    m_intakeWheels.forward();
   }
 
   public void outputIntake() {
-    setIntakeWheels(-k_intakeSpeed);
+    m_intakeWheels.reverse();
   }
 
-  public void inputLowerConveyor() {
-    setLowerConveyor(k_conveyorSpeed);
+  public void stopIntake() {
+    m_intakeWheels.stop();
   }
 
-  public void outputLowerConveyor() {
-    setLowerConveyor(-k_conveyorSpeed);
+  public void inputLowerFeeder() {
+    m_lowerFeeder.forward();
   }
 
-  public void inputUpperConveyor() {
-    setUpperConveyor(k_conveyorSpeed);
+  public void outputLowerFeeder() {
+    m_lowerFeeder.reverse();
   }
 
-  public void outputUpperConveyor() {
-    setUpperConveyor(-k_conveyorSpeed);
+  public void stopLowerFeeder() {
+    m_lowerFeeder.stop();
+  }
+
+  public void inputUpperFeeder() {
+    m_upperFeeder.forward();
+  }
+
+  public void outputUpperFeeder() {
+    m_upperFeeder.reverse();
+  }
+
+  public void stopUpperFeeder() {
+    m_upperFeeder.stop();
   }
 
   public void outputShooterWheels() {
-    setShooterWheels(k_shooterWheelSpeed);
+    m_shooterWheels.forward();
   }
 
-  private void setIntakeWheels(double speed) {
-    m_intakeWheels.set(ControlMode.PercentOutput, speed);
-  }
-  
-  private void setLowerConveyor(double speed) {
-    m_lowerConveyor.set(ControlMode.PercentOutput, speed);
-  }
-  
-  private void setUpperConveyor(double speed) {
-    m_upperConveyor.set(ControlMode.PercentOutput, speed);
-  }
-  
-  private void setShooterWheels(double speed) {
-    m_shooterWheels.set(ControlMode.PercentOutput, speed);
+  public void stopShooterWheels() {
+    m_shooterWheels.stop();
   }
 
   public boolean isBallAtIndex1() {

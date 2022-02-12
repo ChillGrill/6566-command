@@ -24,10 +24,7 @@ public class ShootCommand extends SequentialCommandGroup {
       new WaitCommand(k_shooterWindupTime),
       new InstantCommand(shooter::inputUpperFeeder, shooter),
       new WaitCommand(k_shootingTime),
-      parallel(
-        new InstantCommand(shooter::stopUpperFeeder, shooter),
-        new InstantCommand(shooter::stopShooterWheels, shooter)
-      )
+      new StopFeederCommand(shooter)
     );
   }
 }

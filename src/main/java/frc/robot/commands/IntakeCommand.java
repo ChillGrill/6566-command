@@ -18,18 +18,19 @@ public class IntakeCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      parallel(  
-            new InstantCommand(shooter::inputIntake, shooter),
-            new InstantCommand(shooter::inputLowerFeeder, shooter),
-            new InstantCommand(shooter::inputUpperFeeder, shooter),
-            new InstantCommand(shooter::lowerIntake, shooter)
-          ),
-          new WaitUntilCommand(shooter::isBallAtIndex2),
-          new InstantCommand(shooter::stopUpperFeeder, shooter),
-          new WaitUntilCommand(shooter::isBallAtIndex1),
-          new InstantCommand(shooter::inputUpperFeeder, shooter),
-          new WaitUntilCommand(() -> !shooter.isBallAtIndex1()),
-          new WaitUntilCommand(shooter::isBallAtIndex2)
+      parallel(
+        new InstantCommand(shooter::inputIntake, shooter),
+        new InstantCommand(shooter::inputLowerFeeder, shooter),
+        new InstantCommand(shooter::inputUpperFeeder, shooter),
+        new InstantCommand(shooter::lowerIntake, shooter)
+      ),
+      new WaitUntilCommand(shooter::isBallAtIndex2),
+      new InstantCommand(shooter::stopUpperFeeder, shooter),
+      new WaitUntilCommand(shooter::isBallAtIndex1),
+      new InstantCommand(shooter::inputUpperFeeder, shooter),
+      new WaitUntilCommand(() -> !shooter.isBallAtIndex1()),
+      new WaitUntilCommand(shooter::isBallAtIndex2),
+      new StopFeederCommand(shooter)
     );
   }
 }

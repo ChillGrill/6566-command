@@ -7,17 +7,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-public class ShootCommand extends CommandBase {
+public class EjectIndexerCommand extends CommandBase {
   private final Shooter m_shooter;
-  private final double m_targetVelocity;
-
-  private int m_cyclesAtSpeed = 0;
-  private final int m_cyclesToBeAtSpeed = 10;
-
-  /** Creates a new ShootCommand. */
-  public ShootCommand(Shooter shooter, double targetVelocity) {
+  
+  /** Creates a new EjectIndexerCommand. */
+  public EjectIndexerCommand(Shooter shooter) {
     m_shooter = shooter;
-    m_targetVelocity = targetVelocity;
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooter);
@@ -25,28 +20,23 @@ public class ShootCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_shooter.setTargetShooterVelocity(m_targetVelocity);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_shooter.isShooterAtSpeed()) {
-      m_cyclesAtSpeed++;
-    } else {
-      m_cyclesAtSpeed = 0;
-    }
+    m_shooter.outputIntake();
+    m_shooter.outputOuterIndexer();
+    m_shooter.outputInnerIndexer();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_cyclesAtSpeed >= m_cyclesToBeAtSpeed;
+    return false;
   }
 }

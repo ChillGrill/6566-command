@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.LifterConstants.*;
+import static frc.robot.Constants.Lifter.*;
 
 public class Lifter extends SubsystemBase {
   private final Solenoid m_lifterSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_lifterSolenoidID);
@@ -23,10 +23,10 @@ public class Lifter extends SubsystemBase {
   }
 
   public void raise() {
-    m_lifterSolenoid.set(k_lifterRaiseValue);
+    m_lifterSolenoid.set(true);
   }
 
   public void lower() {
-    m_lifterSolenoid.set(!k_lifterRaiseValue);
+    m_lifterSolenoid.set(false);
   }
 }

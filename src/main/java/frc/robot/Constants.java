@@ -17,65 +17,78 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final int k_pigeonID = 9;
-
+  
   public final class Controls {
     // Drive controls
-    public static final int k_leftDriveJoystickChannel = 0;
-    public static final int k_rightDriveJoystickChannel = 1;
-    public static final int k_leftDriveAxisChannel = 1;
-    public static final int k_rightDriveAxisChannel = 1;
-
+    public static final int k_driverJoystickChannel = 0;
+    public static final int k_forwardDriveAxisChannel = 1;
+    public static final int k_turnDriveAxisChannel = 1;
+    public static final int k_slowDriveButton = 1;
+    public static final int k_toggleCurveButton = 3;
+    public static final int k_turnInPlaceButton = 4;
+    
     // Operator controls
-    public static final int k_operatorJoystickChannel = 2;
-    public static final int k_liftButton = 0;
+    public static final int k_operatorJoystickChannel = 1;
+    public static final int k_liftButton = 3;
     public static final int k_intakeButton = 1;
-    public static final int k_shootButton = 2;
-    public static final int k_ejectButton = 3;
+    public static final int k_shootLowButton = 5;
+    public static final int k_shootHighButton = 6;
+    public static final int k_ejectButton = 2;
   }
-
-  public final class DrivetrainConstants {
+  
+  public final class Drivetrain {
     // Motors
     public static final int k_frontLeftDriveID = 1;
     public static final int k_backLeftDriveID = 2;
     public static final int k_frontRightDriveID = 3;
     public static final int k_backRightDriveID = 4;
-
+    
     // Sensors
-    public static final int k_leftDriveEncoderID = 10;
-    public static final int k_rightDriveEncoderID = 11;
-  }
-
-  public final class LifterConstants {
-    // Pneumatics
-    public static final int k_lifterSolenoidID = 2;
+    public static final int k_pigeonID = 0;
 
     // Values
-    public static final boolean k_lifterRaiseValue = true;
+    public static final double k_lowSpeed = 0.5;
+    public static final double k_highSpeed = 1.0;
+
+    // PID gains
+    public static final double k_forwardF = 0.0;
+    public static final double k_forwardP = 0.0;
+    public static final double k_forwardI = 0.0;
+    public static final double k_forwardD = -0.0;
+    
+    public static final double k_turnF = 0.0;
+    public static final double k_turnP = 0.0;
+    public static final double k_turnI = 0.0;
+    public static final double k_turnD = -0.0;
   }
 
-  public final class ShooterConstants {
+  public final class Lifter {
+    // Pneumatics
+    public static final int k_lifterSolenoidID = 0;
+  }
+
+  public final class Shooter {
     // Motors
-    public static final int k_intakeWheelsID = 5;
-    public static final int k_lowerFeederID = 6;
-    public static final int k_upperFeederID = 7;
-    public static final int k_shooterWheelsID = 8;
-
-    // Pneumatics
-    public static final int k_intakeSolenoidID = 1;
+    public static final int k_shooterMotorID = 5;
+    public static final int k_outerIndexerMotorID = 6;
+    public static final int k_innerIndexerMotorID = 7;
+    public static final int k_intakeMotorID = 8;
 
     // Sensors
-    public static final int k_index1LimitSwitchID = 1;
-    public static final int k_index2LimitSwitchID = 2;
-    public static final int k_shooterEncoderChannelA = 3;
-    public static final int k_shooterEncoderChannelB = 4;
+    public static final int k_outerIndexLimitSwitchID = 1;
+    public static final int k_innerIndexLimitSwitchID = 2;
 
     // Values
-    public static final double k_shooterWheelSpeed = 1.0;
-    public static final double k_feederSpeed = 1.0;
-    public static final double k_intakeSpeed = 1.0;
-    public static final boolean k_intakeRaiseValue = true;
-    public static final double k_shooterWindupTime = 1.0;
-    public static final double k_shootingTime = 1.0;
+    public static final double k_shooterLowSpeed = 10000;
+    public static final double k_shooterHighSpeed = 13000;
+    public static final double k_shooterAllowedError = 20;
+    public static final double k_indexerSpeed = 0.35;
+    public static final double k_intakeSpeed = 0.4;
+
+    // PID gains
+    public static final double k_f = 0.465;
+    public static final double k_p = 0.15;
+    public static final double k_i = 0.001;
+    public static final double k_d = -1.5;
   }
 }

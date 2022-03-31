@@ -4,101 +4,116 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.components.TernaryMotorController;
 
-import static frc.robot.Constants.ShooterConstants.*;
+import static frc.robot.Constants.Shooter.*;
 
 public class Shooter extends SubsystemBase {
-  private final TernaryMotorController m_intakeWheels = new TernaryMotorController(new WPI_VictorSPX(k_intakeWheelsID), k_intakeSpeed);
-  private final TernaryMotorController m_lowerFeeder = new TernaryMotorController(new WPI_VictorSPX(k_lowerFeederID), k_feederSpeed);
-  private final TernaryMotorController m_upperFeeder = new TernaryMotorController(new WPI_VictorSPX(k_upperFeederID), k_feederSpeed);
-  private final TernaryMotorController m_shooterWheels = new TernaryMotorController(new WPI_VictorSPX(k_shooterWheelsID), k_shooterWheelSpeed);
+  // Motors
+  private final WPI_VictorSPX m_intakeMotor = new WPI_VictorSPX(k_intakeMotorID);
+  private final WPI_VictorSPX m_outerIndexerMotor = new WPI_VictorSPX(k_outerIndexerMotorID);
+  private final WPI_VictorSPX m_innerIndexerMotor = new WPI_VictorSPX(k_innerIndexerMotorID);
+  private final WPI_TalonFX m_shooterMotor = new WPI_TalonFX(k_shooterMotorID);
 
-  private final Solenoid m_intakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, k_intakeSolenoidID);
+  // Sensors
+  private final DigitalInput m_outerIndexLimitSwitch = new DigitalInput(k_outerIndexLimitSwitchID);
+  private final DigitalInput m_innerIndexLimitSwitch = new DigitalInput(k_innerIndexLimitSwitchID);
 
-  private final DigitalInput m_index1LimitSwitch = new DigitalInput(k_index1LimitSwitchID);
-  private final DigitalInput m_index2LimitSwitch = new DigitalInput(k_index2LimitSwitchID);
+  // Instance variables
+  private double m_targetShooterVelocity = 0;
 
   /** Creates a new Intake. */
   public Shooter() {
+    m_shooterMotor.setNeutralMode(NeutralMode.Coast);
+    m_outerIndexerMotor.setNeutralMode(NeutralMode.Brake);
+    m_innerIndexerMotor.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-
-  public void raiseIntake() {
-    m_intakeSolenoid.set(k_intakeRaiseValue);
-  }
-
-  public void lowerIntake() {
-    m_intakeSolenoid.set(!k_intakeRaiseValue);
+    if (m_targetShooterVelocity == 0) {
+      m_shooterMotor.stopMotor();
+    } else {
+      m_shooterMotor.set(ControlMode.Velocity, m_targetShooterVelocity);
+    }
   }
 
   public void inputIntake() {
-    m_intakeWheels.forward();
+    m_intakeMotor.set(k_intakeSpeed);
   }
 
   public void outputIntake() {
-    m_intakeWheels.reverse();
+    m_intakeMotor.set(-k_intakeSpeed);
   }
 
   public void stopIntake() {
-    m_intakeWheels.stop();
+    m_intakeMotor.stopMotor();
   }
 
-  public void inputLowerFeeder() {
-    m_lowerFeeder.forward();
+  public void inputOuterIndexer() {
+    m_outerIndexerMotor.set(k_indexerSpeed);
   }
 
-  public void outputLowerFeeder() {
-    m_lowerFeeder.reverse();
+  public void outputOuterIndexer() {
+    m_outerIndexerMotor.set(-k_indexerSpeed);
   }
 
-  public void stopLowerFeeder() {
-    m_lowerFeeder.stop();
+  public void stopOuterIndexer() {
+    m_outerIndexerMotor.stopMotor();
   }
 
-  public void inputUpperFeeder() {
-    m_upperFeeder.forward();
+  public void inputInnerIndexer() {
+    m_innerIndexerMotor.set(k_indexerSpeed);
   }
 
-  public void outputUpperFeeder() {
-    m_upperFeeder.reverse();
+  public void outputInnerIndexer() {
+    m_innerIndexerMotor.set(-k_indexerSpeed);
   }
 
-  public void stopUpperFeeder() {
-    m_upperFeeder.stop();
+  public void stopInnerIndexer() {
+    m_innerIndexerMotor.stopMotor();
   }
 
-  public void outputShooterWheels() {
-    m_shooterWheels.forward();
+  public void setTargetShooterVelocity(double targetVelocity) {
+    m_targetShooterVelocity = targetVelocity;
   }
 
-  public void stopShooterWheels() {
-    m_shooterWheels.stop();
+  public void shootLowGoal() {
+    setTargetShooterVelocity(k_shooterLowSpeed);
   }
 
-  public boolean isBallAtIndex1() {
-    return m_index1LimitSwitch.get();
+  public void shootHighGoal() {
+    setTargetShooterVelocity(k_shooterHighSpeed);
   }
 
-  public boolean isBallAtIndex2() {
-    return m_index2LimitSwitch.get();
+  public void stopShooter() {
+    setTargetShooterVelocity(0);
+  }
+
+  public boolean isBallAtOuterIndex() {
+    return m_outerIndexLimitSwitch.get();
+  }
+
+  public boolean isBallAtInnerIndex() {
+    return m_innerIndexLimitSwitch.get();
   }
 
   public boolean isFullIndex() {
-    return isBallAtIndex1() && isBallAtIndex2();
+    return isBallAtOuterIndex() && isBallAtInnerIndex();
   }
 
   public int indexCount() {
-    return (isBallAtIndex1() ? 1 : 0) + (isBallAtIndex2() ? 1 : 0);
+    return (isBallAtOuterIndex() ? 1 : 0) + (isBallAtInnerIndex() ? 1 : 0);
+  }
+
+  public boolean isShooterAtSpeed() {
+    return Math.abs(m_shooterMotor.getClosedLoopError()) < k_shooterAllowedError;
   }
 }

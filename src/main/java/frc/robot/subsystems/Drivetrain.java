@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Drivetrain.*;
@@ -25,11 +24,7 @@ public class Drivetrain extends SubsystemBase {
   private final WPI_TalonFX m_frontRightMotor = new WPI_TalonFX(k_frontRightDriveID);
   private final WPI_TalonFX m_backRightMotor = new WPI_TalonFX(k_backRightDriveID);
 
-  private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(
-    m_frontLeftMotor, m_backLeftMotor);
-  private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(
-    m_frontRightMotor, m_backRightMotor);
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  private final DifferentialDrive m_drive = new DifferentialDrive(m_frontLeftMotor, m_frontRightMotor);
 
   // Sensors
   private final Pigeon2 m_pigeon = new Pigeon2(k_pigeonID);
@@ -49,11 +44,14 @@ public class Drivetrain extends SubsystemBase {
     m_backLeftMotor.setNeutralMode(NeutralMode.Brake);
     m_frontRightMotor.setNeutralMode(NeutralMode.Brake);
     m_backRightMotor.setNeutralMode(NeutralMode.Brake);
+    
+    m_backLeftMotor.follow(m_frontLeftMotor, FollowerType.PercentOutput);
+    m_backRightMotor.follow(m_frontRightMotor, FollowerType.PercentOutput);
 
     m_frontLeftMotor.setInverted(TalonFXInvertType.CounterClockwise);
-    m_backLeftMotor.setInverted(TalonFXInvertType.CounterClockwise);
+    m_backLeftMotor.setInverted(TalonFXInvertType.FollowMaster);
     m_frontRightMotor.setInverted(TalonFXInvertType.Clockwise);
-    m_backRightMotor.setInverted(TalonFXInvertType.Clockwise);
+    m_backRightMotor.setInverted(TalonFXInvertType.FollowMaster);
 
     TalonFXConfiguration ultimateMasterConfig = new TalonFXConfiguration();
     ultimateMasterConfig.slot0.kF = k_forwardF;
@@ -120,6 +118,6 @@ public class Drivetrain extends SubsystemBase {
     m_frontRightMotor.follow(m_frontLeftMotor, FollowerType.AuxOutput1);
     m_backRightMotor.follow(m_frontLeftMotor, FollowerType.AuxOutput1);
 
-    // m_frontLeftDriveMotor.set(ControlMode.MotionMagic, distance);
+    m_frontLeftMotor.set(ControlMode.MotionMagic, distance);
   }
 }

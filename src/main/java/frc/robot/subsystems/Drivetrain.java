@@ -6,7 +6,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -16,19 +20,19 @@ import static frc.robot.Constants.Drivetrain.*;
 
 public class Drivetrain extends SubsystemBase {
   // Motors
-  private final WPI_TalonFX m_frontLeftDriveMotor = new WPI_TalonFX(k_frontLeftDriveID);
-  private final WPI_TalonFX m_backLeftDriveMotor = new WPI_TalonFX(k_backLeftDriveID);
-  private final WPI_TalonFX m_frontRightDriveMotor = new WPI_TalonFX(k_frontRightDriveID);
-  private final WPI_TalonFX m_backRightDriveMotor = new WPI_TalonFX(k_backRightDriveID);
+  private final WPI_TalonFX m_frontLeftMotor = new WPI_TalonFX(k_frontLeftDriveID);
+  private final WPI_TalonFX m_backLeftMotor = new WPI_TalonFX(k_backLeftDriveID);
+  private final WPI_TalonFX m_frontRightMotor = new WPI_TalonFX(k_frontRightDriveID);
+  private final WPI_TalonFX m_backRightMotor = new WPI_TalonFX(k_backRightDriveID);
 
-  private final MotorControllerGroup m_leftDriveMotors = new MotorControllerGroup(
-    m_frontLeftDriveMotor, m_backLeftDriveMotor);
-  private final MotorControllerGroup m_rightDriveMotors = new MotorControllerGroup(
-    m_frontRightDriveMotor, m_backRightDriveMotor);
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftDriveMotors, m_rightDriveMotors);
+  private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(
+    m_frontLeftMotor, m_backLeftMotor);
+  private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(
+    m_frontRightMotor, m_backRightMotor);
+  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
   // Sensors
-  // private final Pigeon2 m_pigeon = new Pigeon2(k_pigeonID);
+  private final Pigeon2 m_pigeon = new Pigeon2(k_pigeonID);
 
   // Instance variables
   private boolean m_isCurveDrive = false;
@@ -36,22 +40,35 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    m_frontLeftDriveMotor.configFactoryDefault();
-    m_backLeftDriveMotor.configFactoryDefault();
-    m_frontRightDriveMotor.configFactoryDefault();
-    m_backRightDriveMotor.configFactoryDefault();
+    m_frontLeftMotor.configFactoryDefault();
+    m_backLeftMotor.configFactoryDefault();
+    m_frontRightMotor.configFactoryDefault();
+    m_backRightMotor.configFactoryDefault();
 
-    // TODO: configure drive PID
-    // TalonFXConfiguration a = new TalonFXConfiguration();
-    // a.slot0.kF = k_forwardF;
-    // a.slot0.kP = k_forwardP;
-    // a.slot0.kI = k_forwardI;
-    // a.slot0.kD = k_forwardD;
+    m_frontLeftMotor.setNeutralMode(NeutralMode.Brake);
+    m_backLeftMotor.setNeutralMode(NeutralMode.Brake);
+    m_frontRightMotor.setNeutralMode(NeutralMode.Brake);
+    m_backRightMotor.setNeutralMode(NeutralMode.Brake);
+
+    m_frontLeftMotor.setInverted(TalonFXInvertType.CounterClockwise);
+    m_backLeftMotor.setInverted(TalonFXInvertType.CounterClockwise);
+    m_frontRightMotor.setInverted(TalonFXInvertType.Clockwise);
+    m_backRightMotor.setInverted(TalonFXInvertType.Clockwise);
+
+    TalonFXConfiguration ultimateMasterConfig = new TalonFXConfiguration();
+    ultimateMasterConfig.slot0.kF = k_forwardF;
+    ultimateMasterConfig.slot0.kP = k_forwardP;
+    ultimateMasterConfig.slot0.kI = k_forwardI;
+    ultimateMasterConfig.slot0.kD = k_forwardD;
+    ultimateMasterConfig.slot0.integralZone = k_forwardIntegralZone;
     
-    // a.slot1.kF = k_turnF;
-    // a.slot1.kP = k_turnP;
-    // a.slot1.kI = k_turnI;
-    // a.slot1.kD = k_turnD;
+    ultimateMasterConfig.slot1.kF = k_turnF;
+    ultimateMasterConfig.slot1.kP = k_turnP;
+    ultimateMasterConfig.slot1.kI = k_turnI;
+    ultimateMasterConfig.slot1.kD = k_turnD;
+    ultimateMasterConfig.slot1.integralZone = k_turnIntegralZone;
+
+    m_frontLeftMotor.configAllSettings(ultimateMasterConfig);
   }
 
   @Override
@@ -72,11 +89,11 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  public void arcadeDrive(double forwardSpeed, double turnSpeed) {
+  private void arcadeDrive(double forwardSpeed, double turnSpeed) {
     m_drive.arcadeDrive(forwardSpeed, turnSpeed);
   }
 
-  public void curveDrive(double forwardSpeed, double turnSpeed, boolean allowTurnInPlace) {
+  private void curveDrive(double forwardSpeed, double turnSpeed, boolean allowTurnInPlace) {
     m_drive.curvatureDrive(forwardSpeed, turnSpeed, allowTurnInPlace);
   }
 
@@ -99,9 +116,9 @@ public class Drivetrain extends SubsystemBase {
   public void driveDistance(double distance) {
     // TODO: setup motion magic move
     
-    m_backLeftDriveMotor.follow(m_frontLeftDriveMotor, FollowerType.PercentOutput);
-    m_frontRightDriveMotor.follow(m_frontLeftDriveMotor, FollowerType.AuxOutput1);
-    m_backRightDriveMotor.follow(m_frontLeftDriveMotor, FollowerType.AuxOutput1);
+    m_backLeftMotor.follow(m_frontLeftMotor, FollowerType.PercentOutput);
+    m_frontRightMotor.follow(m_frontLeftMotor, FollowerType.AuxOutput1);
+    m_backRightMotor.follow(m_frontLeftMotor, FollowerType.AuxOutput1);
 
     // m_frontLeftDriveMotor.set(ControlMode.MotionMagic, distance);
   }

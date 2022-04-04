@@ -56,11 +56,13 @@ public final class Constants {
     public static final double k_forwardP = 0.0;
     public static final double k_forwardI = 0.0;
     public static final double k_forwardD = -0.0;
+    public static final double k_forwardIntegralZone = 0.0;
     
     public static final double k_turnF = 0.0;
     public static final double k_turnP = 0.0;
     public static final double k_turnI = 0.0;
     public static final double k_turnD = -0.0;
+    public static final double k_turnIntegralZone = 0.0;
   }
 
   public final class Intake {

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.EjectIndexerCommand;
 import frc.robot.commands.IntakeSequence;
+import frc.robot.commands.ShootAutoCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootSequence;
 import frc.robot.commands.StopIntakeCommand;
@@ -56,6 +57,7 @@ public class RobotContainer {
   private final EjectIndexerCommand m_ejectIndexerCommand = new EjectIndexerCommand(m_intake);
   private final ShootCommand m_shootLowCommand = new ShootCommand(m_shooter, k_shooterLowSpeed);
   private final ShootCommand m_shootHighCommand = new ShootCommand(m_shooter, k_shooterHighSpeed);
+  private final ShootAutoCommand m_shootAutoCommand = new ShootAutoCommand(m_shooter);
   private final StopShooterCommand m_stopShooterCommand = new StopShooterCommand(m_shooter);
 
   /**
@@ -113,6 +115,9 @@ public class RobotContainer {
         .whenReleased(m_stopShooterCommand);
     new JoystickButton(m_operatorJoystick, k_shootHighButton)
         .whenPressed(new ShootSequence(m_shooter, m_intake, m_shootHighCommand))
+        .whenReleased(m_stopShooterCommand);
+    new JoystickButton(m_operatorJoystick, k_shootAutoButton)
+        .whenPressed(new ShootSequence(m_shooter, m_intake, m_shootAutoCommand))
         .whenReleased(m_stopShooterCommand);
 
     // Eject from the robot when pressed. Stop when released.

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.subsystems.Intake;
 
@@ -12,7 +13,7 @@ import frc.robot.subsystems.Intake;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class WaitForShooterDeadline extends ParallelDeadlineGroup {
   /** Creates a new WaitForShooterDeadline. */
-  public WaitForShooterDeadline(Intake intake, ShootCommand shootCommand) {
+  public WaitForShooterDeadline(Intake intake, Command shootCommand) {
     // Add the deadline command in the super() call. Add other commands using
     // addCommands().
     super(shootCommand);

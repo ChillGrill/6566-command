@@ -8,6 +8,8 @@ import static frc.robot.Constants.Shooter.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -25,32 +27,33 @@ public class Shooter extends SubsystemBase {
 
   // Instance variables
   private double m_targetShooterVelocity = 0;
-  private ShooterMode m_shooterMode = ShooterMode.Stop;
+  private boolean m_doRunShooter = false;
+  private int m_cyclesAtSpeed = 0;
 
   /** Creates a new Intake. */
   public Shooter() {
+    TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+    shooterConfig.slot0.kF = k_f;
+    shooterConfig.slot0.kP = k_p;
+    shooterConfig.slot0.kI = k_i;
+    shooterConfig.slot0.kD = k_d;
+    shooterConfig.slot0.integralZone = k_integralZone;
+    m_shooterMotor.configAllSettings(shooterConfig);
+
     m_shooterMotor.setNeutralMode(NeutralMode.Coast);
+    m_shooterMotor.setInverted(TalonFXInvertType.CounterClockwise);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    switch (m_shooterMode) {
-      case Auto:
-        // TODO: Auto shooting speed based on camera.
-        break;
-      case Manual:
-        m_shooterMotor.set(ControlMode.Velocity, m_targetShooterVelocity);
-        break;
-      case Stop:
-        m_shooterMotor.stopMotor();
-        break;
-    }
+    updateShooter();
   }
 
   public void setTargetShooterVelocity(double targetVelocity) {
-    m_shooterMode = ShooterMode.Manual;
     m_targetShooterVelocity = targetVelocity;
+    m_cyclesAtSpeed = 0;
+    m_doRunShooter = true;
   }
 
   public void shootLowGoal() {
@@ -61,21 +64,39 @@ public class Shooter extends SubsystemBase {
     setTargetShooterVelocity(k_shooterHighSpeed);
   }
 
-  public void autoShooterSpeed() {
-    m_shooterMode = ShooterMode.Auto;
+  public void shootAuto() {
+    double area = tA.getDouble(0.0);
+    if (area < k_minimumArea || k_maximumArea < area) {
+      stopShooter();
+      return;
+    }
+    double targetVelocity = k_baseVelocity + ((k_baseArea - area) * k_velocityChangePerPercentArea);
+    setTargetShooterVelocity(targetVelocity);
   }
 
   public void stopShooter() {
-    m_shooterMode = ShooterMode.Stop;
+    m_doRunShooter = false;
+    m_cyclesAtSpeed = 0;
   }
 
-  public boolean isShooterAtSpeed() {
-    return Math.abs(m_shooterMotor.getClosedLoopError()) < k_shooterAllowedError;
+  private void updateShooter() {
+    if (m_doRunShooter) {
+      m_shooterMotor.set(ControlMode.Velocity, m_targetShooterVelocity);
+      checkShooterSpeed();
+    } else {
+      m_shooterMotor.stopMotor();
+    }
   }
 
-  private enum ShooterMode {
-    Stop,
-    Manual,
-    Auto
+  private void checkShooterSpeed() {
+    if (Math.abs(m_shooterMotor.getClosedLoopError()) < k_shooterAllowedError) {
+      m_cyclesAtSpeed++;
+    } else {
+      m_cyclesAtSpeed = 0;
+    }
+  }
+
+  public boolean isAtSpeed() {
+    return m_cyclesAtSpeed >= k_minimumCyclesAtSpeed;
   }
 }

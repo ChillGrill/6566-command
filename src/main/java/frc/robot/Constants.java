@@ -33,6 +33,7 @@ public final class Constants {
     public static final int k_intakeButton = 1;
     public static final int k_shootLowButton = 5;
     public static final int k_shootHighButton = 6;
+    public static final int k_shootAutoButton = 7;
     public static final int k_ejectButton = 2;
   }
   
@@ -85,16 +86,26 @@ public final class Constants {
     // Motors
     public static final int k_shooterMotorID = 5;
 
-    // Values
+    // Speeds
     public static final double k_shooterLowSpeed = 7000;
     public static final double k_shooterHighSpeed = 13000;
+
+    // Error range
     public static final double k_shooterAllowedError = 20;
+    public static final int k_minimumCyclesAtSpeed = 10;
+
+    // Camera-driven shooting
+    public static final double k_baseVelocity = 16000;
+    public static final double k_baseArea = 0.05;
+    public static final double k_velocityChangePerPercentArea = 1500; // Smaller areas use higher speeds.
+    public static final double k_minimumArea = 0.08;
+    public static final double k_maximumArea = 0.04;
 
     // PID gains
     public static final double k_f = 0.465;
     public static final double k_p = 0.15;
     public static final double k_i = 0.000;
-    public static final double k_d = -0.0;
-    public static final double k_iZone = 0.0;
+    public static final double k_d = 0.0;
+    public static final double k_integralZone = 0.0;
   }
 }

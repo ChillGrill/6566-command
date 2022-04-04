@@ -79,7 +79,7 @@ public final class Constants {
     public static final int k_innerIndexLimitSwitchID = 2;
 
     // Values
-    public static final double k_shooterLowSpeed = 10000;
+    public static final double k_shooterLowSpeed = 7000;
     public static final double k_shooterHighSpeed = 13000;
     public static final double k_shooterAllowedError = 20;
     public static final double k_indexerSpeed = 0.35;

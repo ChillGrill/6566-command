@@ -24,9 +24,6 @@ public class StopShooterCommand extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooter.stopIntake();
-    m_shooter.stopOuterIndexer();
-    m_shooter.stopInnerIndexer();
     m_shooter.stopShooter();
   }
 }

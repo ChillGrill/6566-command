@@ -62,6 +62,20 @@ public final class Constants {
     public static final double k_turnD = -0.0;
   }
 
+  public final class Intake {
+    // Motors
+    public static final int k_outerIndexerMotorID = 6;
+    public static final int k_innerIndexerMotorID = 7;
+    public static final int k_intakeMotorID = 8;
+
+    // Sensors
+    public static final int k_innerIndexLimitSwitchID = 0;
+
+    // Values
+    public static final double k_indexerSpeed = 0.35;
+    public static final double k_intakeSpeed = 0.4;
+  }
+
   public final class Lifter {
     // Pneumatics
     public static final int k_lifterSolenoidID = 0;
@@ -70,25 +84,17 @@ public final class Constants {
   public final class Shooter {
     // Motors
     public static final int k_shooterMotorID = 5;
-    public static final int k_outerIndexerMotorID = 6;
-    public static final int k_innerIndexerMotorID = 7;
-    public static final int k_intakeMotorID = 8;
-
-    // Sensors
-    public static final int k_outerIndexLimitSwitchID = 1;
-    public static final int k_innerIndexLimitSwitchID = 2;
 
     // Values
     public static final double k_shooterLowSpeed = 7000;
     public static final double k_shooterHighSpeed = 13000;
     public static final double k_shooterAllowedError = 20;
-    public static final double k_indexerSpeed = 0.35;
-    public static final double k_intakeSpeed = 0.4;
 
     // PID gains
     public static final double k_f = 0.465;
     public static final double k_p = 0.15;
-    public static final double k_i = 0.001;
-    public static final double k_d = -1.5;
+    public static final double k_i = 0.000;
+    public static final double k_d = -0.0;
+    public static final double k_iZone = 0.0;
   }
 }

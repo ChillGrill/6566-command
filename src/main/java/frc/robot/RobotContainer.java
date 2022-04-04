@@ -20,6 +20,7 @@ import frc.robot.commands.ShootSequence;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.Shooter;
 
@@ -40,6 +41,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // Subsystems
   private final Drivetrain m_drivetrain = new Drivetrain();
+  private final Intake m_intake = new Intake();
   private final Lifter m_lifter = new Lifter();
   private final Shooter m_shooter = new Shooter();
 
@@ -49,9 +51,9 @@ public class RobotContainer {
 
   // Commands
   private final AutoCommand m_autoCommand = new AutoCommand(m_drivetrain, m_shooter);
-  private final IntakeSequence m_intakeCommand = new IntakeSequence(m_shooter);
-  private final StopIntakeCommand m_stopIndexerCommand = new StopIntakeCommand(m_shooter);
-  private final EjectIndexerCommand m_ejectIndexerCommand = new EjectIndexerCommand(m_shooter);
+  private final IntakeSequence m_intakeCommand = new IntakeSequence(m_intake);
+  private final StopIntakeCommand m_stopIndexerCommand = new StopIntakeCommand(m_intake);
+  private final EjectIndexerCommand m_ejectIndexerCommand = new EjectIndexerCommand(m_intake);
   private final ShootCommand m_shootLowCommand = new ShootCommand(m_shooter, k_shooterLowSpeed);
   private final ShootCommand m_shootHighCommand = new ShootCommand(m_shooter, k_shooterHighSpeed);
   private final StopShooterCommand m_stopShooterCommand = new StopShooterCommand(m_shooter);
@@ -72,11 +74,11 @@ public class RobotContainer {
                 m_driverJoystick.getRawButton(k_turnInPlaceButton)),
             m_drivetrain));
 
+      m_lifter.setDefaultCommand(m_stopIndexerCommand);
+
     m_lifter.setDefaultCommand(
       new RunCommand(m_lifter::lower, m_lifter)
     );
-
-    m_shooter.setDefaultCommand(m_stopIndexerCommand);
   }
 
   /**
@@ -107,10 +109,10 @@ public class RobotContainer {
 
     // Begin the shooting process. Stop when released.
     new JoystickButton(m_operatorJoystick, k_shootLowButton)
-        .whenPressed(new ShootSequence(m_shooter, m_shootLowCommand))
+        .whenPressed(new ShootSequence(m_shooter, m_intake, m_shootLowCommand))
         .whenReleased(m_stopShooterCommand);
     new JoystickButton(m_operatorJoystick, k_shootHighButton)
-        .whenPressed(new ShootSequence(m_shooter, m_shootHighCommand))
+        .whenPressed(new ShootSequence(m_shooter, m_intake, m_shootHighCommand))
         .whenReleased(m_stopShooterCommand);
 
     // Eject from the robot when pressed. Stop when released.

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -12,10 +13,10 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootSequence extends SequentialCommandGroup {
   /** Creates a new ShootCommand. */
-  public ShootSequence(Shooter shooter, ShootCommand shootCommand) {
-    final WaitForShooterDeadline waitForShooter = new WaitForShooterDeadline(shooter, shootCommand);
-    final IndexInnerToShooter innerToShooter = new IndexInnerToShooter(shooter);
-    final IndexOuterToInner outerToInner = new IndexOuterToInner(shooter);
+  public ShootSequence(Shooter shooter, Intake intake, ShootCommand shootCommand) {
+    final WaitForShooterDeadline waitForShooter = new WaitForShooterDeadline(intake, shootCommand);
+    final IndexInnerToShooter innerToShooter = new IndexInnerToShooter(intake);
+    final IndexOuterToInner outerToInner = new IndexOuterToInner(intake);
     
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());

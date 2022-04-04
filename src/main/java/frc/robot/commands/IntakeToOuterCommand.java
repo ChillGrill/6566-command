@@ -5,17 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 
 public class IntakeToOuterCommand extends CommandBase {
-  private final Shooter m_shooter;
+  private final Intake m_intake;
 
   /** Creates a new IntakeToOuterCommand. */
-  public IntakeToOuterCommand(Shooter shooter) {
-    m_shooter = shooter;
+  public IntakeToOuterCommand(Intake intake) {
+    m_intake = intake;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_shooter);
+    addRequirements(m_intake);
   }
 
   // Called when the command is initially scheduled.
@@ -25,9 +25,9 @@ public class IntakeToOuterCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.inputIntake();
-    m_shooter.inputOuterIndexer();
-    m_shooter.stopInnerIndexer();
+    m_intake.inputIntake();
+    m_intake.inputOuterIndexer();
+    m_intake.stopInnerIndexer();
   }
 
   // Called once the command ends or is interrupted.
@@ -37,6 +37,6 @@ public class IntakeToOuterCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_shooter.isBallAtOuterIndex();
+    return false;
   }
 }
